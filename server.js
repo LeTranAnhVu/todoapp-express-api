@@ -15,12 +15,12 @@ app.use(bodyParser.urlencoded({extended: false}))
 // parse json
 app.use(bodyParser.json())
 // routers
-app.get('/', function (req, res) {
+app.get('/', function (req, res, next) {
   res.status(200).render('index.html')
 })
 
 // LIST
-app.get('/api/v1/todos', (req, res) => {
+app.get('/api/v1/todos', (req, res, next) => {
   // read the json
   readDB('./DB/todo.json').then(data => {
     if (typeof data === 'string') {
@@ -31,7 +31,7 @@ app.get('/api/v1/todos', (req, res) => {
 })
 
 // CREATE
-app.post('/api/v1/todos', (req, res) => {
+app.post('/api/v1/todos', (req, res, next) => {
   readDB('./DB/todo.json').then(data => {
     let todos = JSON.parse(data).todos
     console.log('new Id: ', idFactory(todos))
@@ -41,7 +41,7 @@ app.post('/api/v1/todos', (req, res) => {
       status: false,
     }
     writeDB('./DB/todo.json', newo).then(() => {
-      res.status(200).json({status: 200, message: 'create thanh cong'})
+      res.status(200).json({status: 200, message: 'create thanh cong', data: newo})
     }).catch(err => {
       res.status(404).json({status: 404, message: 'create that bai'});
     })
@@ -49,7 +49,7 @@ app.post('/api/v1/todos', (req, res) => {
 })
 
 // DETAIL
-app.get('/api/v1/todos/:id', (req, res) => {
+app.get('/api/v1/todos/:id', (req, res, next) => {
   readDB('./DB/todo.json').then(data => {
     let todos = JSON.parse(data).todos
     let findedTodo = findById(req.params.id, todos)
@@ -65,7 +65,7 @@ app.get('/api/v1/todos/:id', (req, res) => {
 
 
 // UPDATE
-app.put('/api/v1/todos/:id', (req, res) => {
+app.put('/api/v1/todos/:id', (req, res, next) => {
   let updatedTodo = {
     id: ~~req.params.id,
     name: req.body.name,
@@ -75,11 +75,12 @@ app.put('/api/v1/todos/:id', (req, res) => {
     res.status(200).json({status: 200, message: 'update thanh cong'})
   }).catch(err=>{
     res.status(404).json({status: 404, message: 'update that bai'});
+    next()
   })
 })
 
 // DELETE
-app.delete('/api/v1/todos/:id', (req, res)=>{
+app.delete('/api/v1/todos/:id', (req, res, next)=>{
   console.log('delete route');
   deleteById('./DB/todo.json', ~~req.params.id).then(()=>{
     res.status(200).json({status: 200, message: 'delete thanh cong'})
@@ -87,6 +88,11 @@ app.delete('/api/v1/todos/:id', (req, res)=>{
     res.status(404).json({status: 404, message: 'delete that bai'});
   })
 })
+
+// ERROR HANDLER
+app.get(err, req, res, next){
+
+}
 
 //listen
 let port = process.env.PORT || 3000
