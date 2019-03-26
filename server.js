@@ -72,7 +72,7 @@ app.put('/api/v1/todos/:id', (req, res, next) => {
     status: req.body.status,
   }
   updateById('./DB/todo.json', updatedTodo).then(() => {
-    res.status(200).json({status: 200, message: 'update thanh cong'})
+    res.status(200).json({status: 200, message: 'update thanh cong', data: updatedTodo})
   }).catch(err=>{
     res.status(404).json({status: 404, message: 'update that bai'});
     next()
@@ -90,9 +90,7 @@ app.delete('/api/v1/todos/:id', (req, res, next)=>{
 })
 
 // ERROR HANDLER
-app.get(err, req, res, next){
 
-}
 
 //listen
 let port = process.env.PORT || 3000
