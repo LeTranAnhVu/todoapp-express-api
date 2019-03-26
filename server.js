@@ -3,6 +3,7 @@ const cors = require('cors');
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const md5 = require('md5');
 
 const {readDB, findById, idFactory, writeDB, updateById, deleteById} = require('./helper')
 
@@ -34,17 +35,20 @@ app.get('/api/v1/todos', (req, res, next) => {
 app.post('/api/v1/todos', (req, res, next) => {
   readDB('./DB/todo.json').then(data => {
     let todos = JSON.parse(data).todos
-    console.log('new Id: ', idFactory(todos))
     let newo = {
-      id: idFactory(todos),
+      id: idFactory(req.body.name, todos),
       name: req.body.name,
       status: false,
     }
-    writeDB('./DB/todo.json', newo).then(() => {
-      res.status(200).json({status: 200, message: 'create thanh cong', data: newo})
-    }).catch(err => {
+    if(newo.id){
+      writeDB('./DB/todo.json', newo).then(() => {
+        res.status(200).json({status: 200, message: 'create thanh cong', data: newo})
+      }).catch(err => {
+        res.status(404).json({status: 404, message: 'create that bai'});
+      })
+    }else {
       res.status(404).json({status: 404, message: 'create that bai'});
-    })
+    }
   })
 })
 
@@ -67,7 +71,7 @@ app.get('/api/v1/todos/:id', (req, res, next) => {
 // UPDATE
 app.put('/api/v1/todos/:id', (req, res, next) => {
   let updatedTodo = {
-    id: ~~req.params.id,
+    id: req.params.id,
     name: req.body.name,
     status: req.body.status,
   }
@@ -81,8 +85,7 @@ app.put('/api/v1/todos/:id', (req, res, next) => {
 
 // DELETE
 app.delete('/api/v1/todos/:id', (req, res, next)=>{
-  console.log('delete route');
-  deleteById('./DB/todo.json', ~~req.params.id).then(()=>{
+  deleteById('./DB/todo.json', req.params.id).then(()=>{
     res.status(200).json({status: 200, message: 'delete thanh cong'})
   }).catch(err=>{
     res.status(404).json({status: 404, message: 'delete that bai'});

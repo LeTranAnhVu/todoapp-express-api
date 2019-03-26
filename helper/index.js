@@ -1,4 +1,5 @@
 const fs = require('fs')
+const md5 = require('md5');
 
 const Helpers = {
   readDB: function (path) {
@@ -12,15 +13,13 @@ const Helpers = {
   },
   findById: function (id, db) {
     let newarr = db.filter(item => {
-      if (item.id === ~~id) return item
+      if (item.id === id) return item
     })
     if (newarr.length === 1) return newarr[0]
     return null
   },
-  idFactory: function (db) {
-    return db.reduce((acc, item) => {
-      return acc + item.id
-    }, 0)
+  idFactory: function () {
+    return md5(JSON.stringify(new Date()))
   },
   writeDB: function (path, data) {
     return new Promise((resolve, reject)=>{
