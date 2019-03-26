@@ -1,13 +1,14 @@
 const path = require('path')
-const cors = require('cors');
+const cors = require('cors')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const md5 = require('md5');
+const md5 = require('md5')
 
-const {readDB, findById, idFactory, writeDB, updateById, deleteById} = require('./helper')
+const {readDB, findById, idFactory, writeDB, updateById, deleteById} = require(
+  './helper')
 
-app.use(cors());
+app.use(cors())
 // middlewares
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -36,18 +37,19 @@ app.post('/api/v1/todos', (req, res, next) => {
   readDB('./DB/todo.json').then(data => {
     let todos = JSON.parse(data).todos
     let newo = {
-      id: idFactory(req.body.name, todos),
+      id: idFactory(),
       name: req.body.name,
       status: false,
     }
-    if(newo.id){
+    if (newo.id) {
       writeDB('./DB/todo.json', newo).then(() => {
-        res.status(200).json({status: 200, message: 'create thanh cong', data: newo})
+        res.status(200).
+          json({status: 200, message: 'create thanh cong', data: newo})
       }).catch(err => {
-        res.status(404).json({status: 404, message: 'create that bai'});
+        res.status(404).json({status: 404, message: 'create that bai'})
       })
-    }else {
-      res.status(404).json({status: 404, message: 'create that bai'});
+    } else {
+      res.status(404).json({status: 404, message: 'create that bai'})
     }
   })
 })
@@ -60,13 +62,12 @@ app.get('/api/v1/todos/:id', (req, res, next) => {
     if (findedTodo && typeof findedTodo === 'object') {
       res.status(200).json(findedTodo)
     } else {
-      Promise.reject(err);
+      Promise.reject(err)
     }
   }).catch(err => {
-    res.status(404).json({status: 404, message: 'Opps! Resource cannot found'});
+    res.status(404).json({status: 404, message: 'Opps! Resource cannot found'})
   })
 })
-
 
 // UPDATE
 app.put('/api/v1/todos/:id', (req, res, next) => {
@@ -76,24 +77,24 @@ app.put('/api/v1/todos/:id', (req, res, next) => {
     status: req.body.status,
   }
   updateById('./DB/todo.json', updatedTodo).then(() => {
-    res.status(200).json({status: 200, message: 'update thanh cong', data: updatedTodo})
-  }).catch(err=>{
-    res.status(404).json({status: 404, message: 'update that bai'});
+    res.status(200).
+      json({status: 200, message: 'update thanh cong', data: updatedTodo})
+  }).catch(err => {
+    res.status(404).json({status: 404, message: 'update that bai'})
     next()
   })
 })
 
 // DELETE
-app.delete('/api/v1/todos/:id', (req, res, next)=>{
-  deleteById('./DB/todo.json', req.params.id).then(()=>{
+app.delete('/api/v1/todos/:id', (req, res, next) => {
+  deleteById('./DB/todo.json', req.params.id).then(() => {
     res.status(200).json({status: 200, message: 'delete thanh cong'})
-  }).catch(err=>{
-    res.status(404).json({status: 404, message: 'delete that bai'});
+  }).catch(err => {
+    res.status(404).json({status: 404, message: 'delete that bai'})
   })
 })
 
 // ERROR HANDLER
-
 
 //listen
 let port = process.env.PORT || 3000
