@@ -17,6 +17,10 @@ app.use(bodyParser.urlencoded({extended: false}))
 // parse json
 app.use(bodyParser.json())
 // routers
+app.use(function(req, res, next){
+  process.env.DOMAIN = req.get('host')
+  next();
+})
 app.get('/', function (req, res, next) {
   res.status(200).render('index.html')
 })

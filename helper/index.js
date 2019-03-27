@@ -15,7 +15,7 @@ const Helpers = {
             }
             if(end !== undefined){
               page++;
-              jsonData.nextPageUrl = `/api/v1/todos?page=${page}`;
+              jsonData.nextPageUrl = `${process.env.DOMAIN}/api/v1/todos?page=${page}`;
               jsonData.nextPage = page;
             }else {
               jsonData.nextPageUrl = null;
