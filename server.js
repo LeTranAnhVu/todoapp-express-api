@@ -5,7 +5,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const md5 = require('md5')
 
-const {readDB, findById, idFactory, writeDB, updateById, deleteById} = require(
+const {readDB, findById, idFactory, writeDB, updateById, deleteById, readLimitDB} = require(
   './helper')
 
 app.use(cors())
@@ -24,12 +24,18 @@ app.get('/', function (req, res, next) {
 // LIST
 app.get('/api/v1/todos', (req, res, next) => {
   // read the json
-  readDB('./DB/todo.json').then(data => {
-    if (typeof data === 'string') {
+  let page = req.query.page ? ~~req.query.page : 1 ;
+
+  readLimitDB('./DB/todo.json', 5, page).then(data => {
+
+    if (typeof data === 'object') {
       res.set('Content-Type', 'application/json')
-      res.json(JSON.parse(data))
+      res.json(data)
     }
-  }).catch(err => {throw err})
+  }).catch(err => {
+    console.log('err', err);
+    next({status: 404, message: 'Khong Tim Thay Tai Nguyen'});
+  })
 })
 
 // CREATE
@@ -46,10 +52,10 @@ app.post('/api/v1/todos', (req, res, next) => {
         res.status(200).
           json({status: 200, message: 'create thanh cong', data: newo})
       }).catch(err => {
-        res.status(404).json({status: 404, message: 'create that bai'})
+        next({status: 404, message: 'create that bai'});
       })
     } else {
-      res.status(404).json({status: 404, message: 'create that bai'})
+      next({status: 404, message: 'create that bai'});
     }
   })
 })
@@ -62,10 +68,10 @@ app.get('/api/v1/todos/:id', (req, res, next) => {
     if (findedTodo && typeof findedTodo === 'object') {
       res.status(200).json(findedTodo)
     } else {
-      Promise.reject(err)
+      next({status: 404, message: 'Khong Tim Thay Tai Nguyen'});
     }
   }).catch(err => {
-    res.status(404).json({status: 404, message: 'Opps! Resource cannot found'})
+    next({status: 404, message: 'Khong Tim Thay Tai Nguyen'});
   })
 })
 
@@ -80,8 +86,7 @@ app.put('/api/v1/todos/:id', (req, res, next) => {
     res.status(200).
       json({status: 200, message: 'update thanh cong', data: updatedTodo})
   }).catch(err => {
-    res.status(404).json({status: 404, message: 'update that bai'})
-    next()
+    next({status: 404, message: 'update that bai'});
   })
 })
 
@@ -90,11 +95,16 @@ app.delete('/api/v1/todos/:id', (req, res, next) => {
   deleteById('./DB/todo.json', req.params.id).then(() => {
     res.status(200).json({status: 200, message: 'delete thanh cong'})
   }).catch(err => {
-    res.status(404).json({status: 404, message: 'delete that bai'})
+    next({status: 404, message: 'delete that bai'});
   })
 })
 
 // ERROR HANDLER
+app.use(function(err, req, res, next){
+  if(err){
+    res.status(err.status).json(err);
+  }
+})
 
 //listen
 let port = process.env.PORT || 3000
