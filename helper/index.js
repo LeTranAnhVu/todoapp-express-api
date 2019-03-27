@@ -5,11 +5,11 @@ const Helpers = {
   readLimitDB: function (path, limit, page) {
     return new Promise((resolve, reject) => {
       Helpers.readDB(path).then(data => {
-          let aData = JSON.parse(data).todos,
+          let aData = JSON.parse(data).todos.reverse(),
             lastIndex = aData.length - 1,
             start = limit * (page - 1),
             end = lastIndex >= (start + limit - 1) ? start + limit : undefined,
-            returnData = aData.slice(start, end).reverse();
+            returnData = aData.slice(start, end);
         jsonData = {
               data: returnData,
             }
