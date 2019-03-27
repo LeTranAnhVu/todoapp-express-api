@@ -7,6 +7,32 @@ const bodyParser = require('body-parser')
 const {readDB, findById, idFactory, writeDB, updateById, deleteById, readLimitDB} = require(
   './helper')
 
+// FireBase connection
+const admin = require('firebase-admin')
+
+const serviceAccount = require(
+  './todo-express-64322-firebase-adminsdk-i2x3n-89b279d866.json')
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://todo-express-64322.firebaseio.com',
+})
+
+let db = admin.firestore()
+
+// let todoRefs = db.collection('document').delete()
+
+// todoRefs.delete();
+
+// userRefs.get().then((snapshot) => {
+//   console.log(snapshot.data())
+// }).catch((err) => {
+//   console.log('Error getting documents', err)
+// })
+// userRefs.set({
+//   haha: 'hihi'
+// })
+
 app.use(cors())
 // middlewares
 app.use(express.static(path.join(__dirname, 'public')))
