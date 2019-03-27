@@ -90,9 +90,14 @@ const Helpers = {
       Helpers.readDB(path).then(response => {
         let todos = JSON.parse(response).todos
         let originLength = todos.length
-        todos = todos.filter((item) => {
-          return item.id !== deletedId
-        })
+        // if ids is array
+        if(typeof deletedId === 'object'){
+          deletedId.forEach(id =>{
+            todos = todos.filter((item) => item.id !== id )
+          })
+        }else {
+          todos = todos.filter((item) => item.id !== deletedId )
+        }
         if (todos.length !== originLength) {
           let jsonData = JSON.stringify({todos: todos})
           // write data to todo
