@@ -9,13 +9,13 @@ const Helpers = {
             lastIndex = aData.length - 1,
             start = limit * (page - 1),
             end = lastIndex >= (start + limit - 1) ? start + limit : undefined,
-            returnData = aData.slice(start, end);
-            jsonData = {
+            returnData = aData.slice(start, end).reverse();
+        jsonData = {
               data: returnData,
             }
             if(end !== undefined){
               page++;
-              jsonData.nextPageUrl = `${process.env.DOMAIN}/api/v1/todos?page=${page}`;
+              jsonData.nextPageUrl = `https://${process.env.DOMAIN}/api/v1/todos?page=${page}`;
               jsonData.nextPage = page;
             }else {
               jsonData.nextPageUrl = null;
@@ -23,7 +23,6 @@ const Helpers = {
             }
         resolve(jsonData)
         }).catch(err => {
-          console.log(err);
           reject(err);
         })
       },
@@ -53,9 +52,7 @@ const Helpers = {
       Helpers.readDB(path).then(response => {
         let todos = JSON.parse(response).todos
         todos.push(data)
-        console.log('data', data)
         let jsonData = JSON.stringify({todos: todos})
-        console.log(jsonData)
         // write data to todo
         return new Promise(() => {
           fs.writeFile(path, jsonData, (err) => {

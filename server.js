@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 // routers
 app.use(function(req, res, next){
-  process.env.DOMAIN = req.get('host')
+  process.env.DOMAIN = req.get('host');
   next();
 })
 app.get('/', function (req, res, next) {
@@ -37,7 +37,6 @@ app.get('/api/v1/todos', (req, res, next) => {
       res.json(data)
     }
   }).catch(err => {
-    console.log('err', err);
     next({status: 404, message: 'Khong Tim Thay Tai Nguyen'});
   })
 })
