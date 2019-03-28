@@ -8,7 +8,7 @@ const Helpers = {
           let aData = JSON.parse(data).todos.reverse(),
             lastIndex = aData.length - 1,
             start = limit * (page - 1),
-            end = lastIndex >= (start + limit - 1) ? start + limit : undefined,
+            end = lastIndex > (start + limit - 1) ? start + limit : undefined,
             returnData = aData.slice(start, end);
         jsonData = {
               data: returnData,
