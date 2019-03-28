@@ -2,28 +2,35 @@ const fs = require('fs')
 const md5 = require('md5')
 
 const Helpers = {
-  readLimitDB: function (path, limit, page) {
+  readLimitDB: function (path, limit, page, searchKey) {
     return new Promise((resolve, reject) => {
-      Helpers.readDB(path).then(data => {
-          let aData = JSON.parse(data).todos.reverse(),
-            lastIndex = aData.length - 1,
+        Helpers.readDB(path).then(data => {
+          let aData = JSON.parse(data).todos.reverse()
+
+          // filter the key if existed
+          if (searchKey !== undefined) {
+            let key = searchKey.toLowerCase();
+            aData = aData.filter(item =>  item.name.toLowerCase().indexOf(key) !== -1)
+          }
+          // get the page
+          let lastIndex = aData.length - 1,
             start = limit * (page - 1),
             end = lastIndex > (start + limit - 1) ? start + limit : undefined,
-            returnData = aData.slice(start, end);
-        jsonData = {
-              data: returnData,
-            }
-            if(end !== undefined){
-              page++;
-              jsonData.nextPageUrl = `https://${process.env.DOMAIN}/api/v1/todos?page=${page}`;
-              jsonData.nextPage = page;
-            }else {
-              jsonData.nextPageUrl = null;
-              jsonData.nextPage = null;
-            }
-        resolve(jsonData)
+            returnData = aData.slice(start, end)
+          jsonData = {
+            data: returnData,
+          }
+          if (end !== undefined) {
+            page++
+            jsonData.nextPageUrl = `https://${process.env.DOMAIN}/api/v1/todos?page=${page}`
+            jsonData.nextPage = page
+          } else {
+            jsonData.nextPageUrl = null
+            jsonData.nextPage = null
+          }
+          resolve(jsonData)
         }).catch(err => {
-          reject(err);
+          reject(err)
         })
       },
     )
@@ -91,12 +98,12 @@ const Helpers = {
         let todos = JSON.parse(response).todos
         let originLength = todos.length
         // if ids is array
-        if(typeof deletedId === 'object'){
-          deletedId.forEach(id =>{
-            todos = todos.filter((item) => item.id !== id )
+        if (typeof deletedId === 'object') {
+          deletedId.forEach(id => {
+            todos = todos.filter((item) => item.id !== id)
           })
-        }else {
-          todos = todos.filter((item) => item.id !== deletedId )
+        } else {
+          todos = todos.filter((item) => item.id !== deletedId)
         }
         if (todos.length !== originLength) {
           let jsonData = JSON.stringify({todos: todos})

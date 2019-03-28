@@ -20,6 +20,8 @@ app.use(function (req, res, next) {
   process.env.DOMAIN = req.get('host')
   next()
 })
+
+
 app.get('/', function (req, res, next) {
   res.status(200).render('index.html')
 })
@@ -28,7 +30,8 @@ app.get('/', function (req, res, next) {
 app.get('/api/v1/todos', (req, res, next) => {
   // read the json
   let page = req.query.page ? ~~req.query.page : 1
-  readLimitDB('./DB/todo.json', 5, page).then(data => {
+  let searchKey = req.query.search ? req.query.search : undefined
+  readLimitDB('./DB/todo.json', 5, page, searchKey).then(data => {
     if (typeof data === 'object') {
       res.set('Content-Type', 'application/json')
       res.json(data)
