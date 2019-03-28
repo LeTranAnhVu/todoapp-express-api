@@ -8,7 +8,7 @@ const {readDB, findById, idFactory, writeDB, updateById, deleteById, readLimitDB
   './helper')
 
 app.use(cors({
-  origin: ["https://localhost:5000","https://localhost:4200"],
+  origin: ["http://localhost:5000","http://localhost:4200"],
   methods: ['GET', 'PUT', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
