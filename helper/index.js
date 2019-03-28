@@ -52,6 +52,7 @@ const Helpers = {
     return null
   },
   idFactory: function () {
+    // username
     return md5(JSON.stringify(new Date()))
   },
   writeDB: function (path, data) {
