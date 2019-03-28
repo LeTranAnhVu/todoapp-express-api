@@ -6,7 +6,6 @@ const bodyParser = require('body-parser')
 
 const {readDB, findById, idFactory, writeDB, updateById, deleteById, readLimitDB} = require(
   './helper')
-
 app.use(cors({
   origin: ["http://localhost:5000","http://localhost:4200"],
   methods: ['GET', 'PUT', 'POST', 'DELETE'],
@@ -19,13 +18,18 @@ app.use(express.static(path.join(__dirname, 'public')))
 // parse json
 app.use(bodyParser.json())
 
-// routers
+
 app.use(function (req, res, next) {
   process.env.DOMAIN = req.get('host')
   next()
 })
 
+app.use(function(req, res, next){
+  res.set('hahaha', 'common baby');
+  next();
+})
 
+// routers
 app.get('/', function (req, res, next) {
   res.status(200).render('index.html')
 })
