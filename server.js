@@ -24,11 +24,6 @@ app.use(function (req, res, next) {
   next()
 })
 
-app.use(function(req, res, next){
-  res.set('hahaha', 'common baby');
-  next();
-})
-
 // routers
 app.get('/', function (req, res, next) {
   res.status(200).render('index.html')
