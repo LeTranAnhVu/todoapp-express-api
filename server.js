@@ -12,28 +12,36 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 }))
+
+
 // middlewares
+
+// serve the static files like css or img ect
 app.use(express.static(path.join(__dirname, 'public')))
 
 // parse json
 app.use(bodyParser.json())
 
-
-app.use(function (req, res, next) {
+// get the domain name
+app.use( (req, res, next) => {
   process.env.DOMAIN = req.get('host')
   next()
 })
 
 // routers
-app.get('/', function (req, res, next) {
+app.get('/', (req, res, next) => {
   res.status(200).render('index.html')
 })
-
 // LIST
 app.get('/api/v1/todos', (req, res, next) => {
   // read the json
   let page = req.query.page ? ~~req.query.page : 1
   let searchKey = req.query.search ? req.query.search : undefined
+
+  /*
+  * Read DB
+  * send the json to client
+  * */
   readLimitDB('./DB/todo.json', 5, page, searchKey).then(data => {
     if (typeof data === 'object') {
       res.set('Content-Type', 'application/json')
@@ -115,7 +123,7 @@ app.delete('/api/v1/todos/:id', (req, res, next) => {
 })
 
 // ERROR HANDLER
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   if (err) {
     res.status(err.status).json(err)
   }
