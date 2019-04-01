@@ -6,13 +6,13 @@ const bodyParser = require('body-parser')
 
 const {readDB, findById, idFactory, writeDB, updateById, deleteById, readLimitDB} = require(
   './helper')
-app.use(cors({
-  origin: ["http://localhost:5000","http://localhost:4200"],
-  methods: ['GET', 'PUT', 'POST', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
-}))
-
+// app.use(cors({
+//   origin: ["http://localhost:5000","http://localhost:4200"],
+//   methods: ['GET', 'PUT', 'POST', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   optionsSuccessStatus: 200
+// }))
+app.use(cors());
 
 // middlewares
 
