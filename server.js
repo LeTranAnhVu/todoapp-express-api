@@ -25,7 +25,8 @@ app.use(bodyParser.json())
 // get the domain name
 app.use( (req, res, next) => {
   process.env.DOMAIN = req.get('host')
-  next()
+  console.log('ehehee');
+  next();
 })
 
 // routers
